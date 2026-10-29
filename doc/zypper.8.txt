@@ -884,6 +884,9 @@ This command accepts the following options:
 	*--enhances*::
 		Search for packages which enhances the search strings.
 
+	*--all-deps*::
+		Search in all dependencies at once. Same as specifying *--requires*, *--recommends*, *--supplements*, *--conflicts*, *--obsoletes*, *--suggests*, *--enhances* and *--verbose*, so each match shows which dependency it was found in.
+
 	*--provides-pkg*::
 		Search for all packages that provide any of the provides of the package(s) matched by the input parameters.
 

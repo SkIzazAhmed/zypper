@@ -27,6 +27,26 @@ namespace zypp
       );
     }
 
+    Value appendAllDepsToSet ( std::set<zypp::sat::SolvAttr> &target_r, bool &verbose_r )
+    {
+      return Value (
+            noDefaultValue,
+            [ &target_r, &verbose_r ] ( const CommandOption &, const boost::optional<std::string> & ) {
+              target_r.insert( {
+                zypp::sat::SolvAttr::dep_requires,
+                zypp::sat::SolvAttr::dep_recommends,
+                zypp::sat::SolvAttr::dep_supplements,
+                zypp::sat::SolvAttr::dep_conflicts,
+                zypp::sat::SolvAttr::dep_obsoletes,
+                zypp::sat::SolvAttr::dep_suggests,
+                zypp::sat::SolvAttr::dep_enhances
+              } );
+              // show which dependency matched, otherwise the mixed results are hard to read
+              verbose_r = true;
+            }
+      );
+    }
+
     Value setSolvAttrOptional ( boost::optional<zypp::sat::SolvAttr> &target_r, zypp::sat::SolvAttr value_r ) {
       return Value (
           noDefaultValue,
@@ -143,6 +163,10 @@ zypp::ZyppFlags::CommandGroup SearchCmd::cmdOptions() const
       { "enhances", '\0', ZyppFlags::NoArgument, ZyppFlags::appendSolvAttrToSet( that._requestedDeps, sat::SolvAttr::dep_enhances ),
         // translators: --enhances
         _("Search for packages which enhance the search strings.")
+      },
+      { "all-deps", '\0', ZyppFlags::NoArgument, ZyppFlags::appendAllDepsToSet( that._requestedDeps, that._verbose ),
+        // translators: --all-deps
+        _("Search for packages which require, recommend, supplement, conflict with, obsolete, suggest or enhance the search strings. Implies --verbose.")
       },
       { "provides-pkg", '\0', ZyppFlags::NoArgument, ZyppFlags::setSolvAttrOptional( that._requestedReverseSearch, sat::SolvAttr::dep_provides ),
         // translators: --provides-pkg
